@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas></canvas>
+
+  <script>
+    document.addEventListener('touchmove', function (e) {
+      e.preventDefault()
+    })
+    var canvas = document.getElementsByTagName('canvas')[0];
+    var W = window.innerWidth;
+    var H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+    var cxt = canvas.getContext('2d');
+    var f = 90,//最左边三角形两个点之间距离
+      pos = [],//最左边三角形两个点集合
+      //取色相关
+      r = 0,
+      u = Math.PI * 2,
+      v = Math.cos;
+
+    cxt.globalAlpha = 0.6//画布透明度
+    function init() {
+      cxt.clearRect(0, 0, W, H)
+      pos = [{ x: 0, y: H * .7 + f }, { x: 0, y: H * .7 - f }]
+      while (pos[1].x < W + f) draw(pos[0], pos[1])
+    }
+    function draw(i, j) {
+      cxt.beginPath()
+      cxt.moveTo(i.x, i.y)
+      cxt.lineTo(j.x, j.y)
+      var k = j.x + (Math.random() * 2 - 0.25) * f,
+        n = getRandomY(j.y)
+      cxt.lineTo(k, n)
+      cxt.closePath()
+      r -= u / -50
+      cxt.fillStyle = '#' + (v(r) * 127 + 128 << 16 | v(r + u / 3) * 127 + 128 << 8 | v(r + u / 3 * 2) * 127 + 128).toString(16)//取色
+      cxt.fill()
+      pos[0] = pos[1]
+      pos[1] = { x: k, y: n }
+    }
+    function getRandomY(p) {
+      var t = p + (Math.random() * 2 - 1.1) * f
+      return (t > H || t < 0) ? y(p) : t
+    }
+    document.onclick = init
+    init()
+  </script>
+</body>
+
+</html>
